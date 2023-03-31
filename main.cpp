@@ -70,10 +70,10 @@ int main(int /*argc*/, char*/*argv*/[])
 		{
 
 			// Raycasting Loop
-			for (unsigned x = 0; x < mapWidth; x++)
+			for (unsigned x = 0; x < screenWidth; x++)
 			{
 				// Calculate ray position and direction
-				double cameraX = ((2 * x) / double(mapWidth)) - 1; // x-coord in camera space
+				double cameraX = ((2 * x) / double(screenWidth)) - 1; // x-coord in camera space
 				double rayDirX = dirX + planeX * cameraX;
 				double rayDirY = dirY + planeY * cameraX;
 
@@ -109,7 +109,7 @@ int main(int /*argc*/, char*/*argv*/[])
 				else
 				{
 					stepX = 1;
-					sideDistX = ((mapX + 1.0) - posX) * deltaDistX;
+					sideDistX = (mapX + 1.0 - posX) * deltaDistX;
 				}
 
 				if (rayDirY < 0)
@@ -120,7 +120,7 @@ int main(int /*argc*/, char*/*argv*/[])
 				else
 				{
 					stepY = 1;
-					sideDistY = ((mapY + 1.0) - posY) * deltaDistY;
+					sideDistY = (mapY + 1.0 - posY) * deltaDistY;
 				}
 
 				// ********** THIS IS WHERE THE DDA ALGORITHM ACTUALLY STARTS **********
@@ -153,7 +153,7 @@ int main(int /*argc*/, char*/*argv*/[])
 					perpWallDist = sideDistY - deltaDistY;
 
 				//Calculate the height of the wall that is to be drawn
-				int lineHeight = (int)((mapHeight * 2) / perpWallDist);
+				int lineHeight = (int)((mapHeight * 4) / perpWallDist);
 
 				// Calculate the lowest and highest pixel to fill in current stripe
 				int drawStart = (-lineHeight / 2) + (mapHeight / 2);
@@ -189,32 +189,30 @@ int main(int /*argc*/, char*/*argv*/[])
 				}
 
 				if (side == 1)
-					color = (sf::Color)(color.toInteger() / 2);
+					color = (sf::Color)(color.toInteger() / 1.5);
 
-				//for (unsigned short y = 1; y <= 26; y++)
-				//{
-				//	// Draw the pixels of the stripes as vertical lines
-				//	sf::Vertex line[] =
-				//	{
-				//		sf::Vertex(sf::Vector2f(x * y, drawStart * lineHeight)),
-				//		sf::Vertex(sf::Vector2f(x * y, drawEnd * lineHeight))
-				//	};
+				for (unsigned short y = 1; y <= 26; y++)
+				{
+					// Draw the pixels of the stripes as vertical lines
+					sf::Vertex line[] =
+					{
+						sf::Vertex(sf::Vector2f(x + y, drawStart * lineHeight)),
+						sf::Vertex(sf::Vector2f(x + y, drawEnd * lineHeight))
+					};
 
-				//	line->color = color;
-				//	//window->draw(line, 2, sf::Lines);
-				//}
+					line->color = color;
+					window->draw(line, 2, sf::Lines);
+				}
 				
 
 				sf::RectangleShape line2;
-				line2.setPosition(x * 26, drawStart * lineHeight);
-				line2.setSize(sf::Vector2f(x * 26, drawEnd * lineHeight));
-				line2.setScale(sf::Vector2f(1.0, 1.0));
+				line2.setPosition(x , drawStart * lineHeight);
+				line2.setSize(sf::Vector2f(x, drawEnd * lineHeight));
 				line2.setFillColor(color);
 				/*line2.setOutlineColor(sf::Color::Black);
 				line2.setOutlineThickness(3.0);*/
 
-				
-				window->draw(line2);
+				//window->draw(line2);
 
 			}
 
@@ -222,13 +220,12 @@ int main(int /*argc*/, char*/*argv*/[])
 			oldTime = time;
 			time = clock.getElapsedTime();
 			double frameTime = time.asSeconds() - oldTime.asSeconds();
-
 			window->display();
 			window->clear();
 
 			// Speed modifiers
 			double movespeed = frameTime * 1.5;
-			double rotSpeed =  frameTime * 30.0;
+			double rotSpeed =  frameTime * 3.0;
 
 			// Input Keys
 			sf::Event event;
