@@ -153,7 +153,7 @@ int main(int /*argc*/, char*/*argv*/[])
 					perpWallDist = sideDistY - deltaDistY;
 
 				//Calculate the height of the wall that is to be drawn
-				int lineHeight = (int)(mapHeight / perpWallDist);
+				int lineHeight = (int)((mapHeight * 2) / perpWallDist);
 
 				// Calculate the lowest and highest pixel to fill in current stripe
 				int drawStart = (-lineHeight / 2) + (mapHeight / 2);
@@ -188,25 +188,33 @@ int main(int /*argc*/, char*/*argv*/[])
 					break;
 				}
 
-				
-				// Draw the pixels of the stripes as vertical lines
-				sf::Vertex line[] =
+				if (side == 1)
+					color = (sf::Color)(color.toInteger() / 2);
+
+				for (unsigned short y = 1; y <= 26; y++)
 				{
-					sf::Vertex(sf::Vector2f(x*26, drawStart * lineHeight)),
-					sf::Vertex(sf::Vector2f(x*26, drawEnd * lineHeight))
-				};
+					// Draw the pixels of the stripes as vertical lines
+					sf::Vertex line[] =
+					{
+						sf::Vertex(sf::Vector2f(x * y, drawStart * lineHeight)),
+						sf::Vertex(sf::Vector2f(x * y, drawEnd * lineHeight))
+					};
+
+					line->color = color;
+					//window->draw(line, 2, sf::Lines);
+				}
+				
 
 				sf::RectangleShape line2;
-				line2.setPosition(x * 26, drawStart * lineHeight);
-				line2.setSize(sf::Vector2f(x * 26, drawEnd * lineHeight));
+				line2.setPosition(x * 8, drawStart * lineHeight);
+				line2.setSize(sf::Vector2f(x * 8, drawEnd * lineHeight));
 				line2.setScale(sf::Vector2f(1.0, 1.0));
 				line2.setFillColor(color);
+				/*line2.setOutlineColor(sf::Color::Black);
+				line2.setOutlineThickness(3.0);*/
 
-				line->color = color;
-				//window->draw(line2);
-				window->draw(line, 2, sf::Lines);
 				
-				
+				window->draw(line2);
 
 			}
 
@@ -215,11 +223,12 @@ int main(int /*argc*/, char*/*argv*/[])
 			time = clock.getElapsedTime();
 			double frameTime = time.asSeconds() - oldTime.asSeconds();
 			//std::cout << "FPS: " << 1.0 / frameTime << std::endl;
+
 			window->display();
 			window->clear();
 
 			// Speed modifiers
-			double movespeed = frameTime * 2.0;
+			double movespeed = frameTime * 1.5;
 			double rotSpeed =  frameTime * 30.0;
 
 			// Input Keys
@@ -235,8 +244,6 @@ int main(int /*argc*/, char*/*argv*/[])
 						//std::cout << "Heeeeeeelllllllllooooooo" << std::endl;
 						if (map[int(posX + dirX * moveSpeed)][int(posY)] == false) posX += dirX * moveSpeed;
 						if (map[int(posX)][int(posY + dirY * moveSpeed)] == false) posY += dirY * moveSpeed;
-						window->clear();
-						window->display();
 
 					}
 
@@ -244,8 +251,6 @@ int main(int /*argc*/, char*/*argv*/[])
 					{
 						if (map[int(posX - dirX * moveSpeed)][int(posY)] == false) posX -= dirX * moveSpeed;
 						if (map[int(posX)][int(posY - dirY * moveSpeed)] == false) posY -= dirY * moveSpeed;
-						window->clear();
-						window->display();
 					}
 
 					if (event.key.code == sf::Keyboard::Right)
