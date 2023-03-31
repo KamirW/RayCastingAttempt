@@ -90,7 +90,7 @@ int main(int /*argc*/, char*/*argv*/[])
 			int stepY;
 
 			// Determines whether or not a wall was hit
-			int hit = 0;
+			int hit = false;
 
 			// Determines what side was hit (x or y [0 for x-side, 1 for y-side])
 			int side;
@@ -119,7 +119,49 @@ int main(int /*argc*/, char*/*argv*/[])
 			}
 
 			// ********** THIS IS WHERE THE DDA ALGORITHM ACTUALLY STARTS **********
+			// The DDA Loop
+			while (!hit)
+			{
+				// Jump to the next map square (either in the x-direction or the y-direction)
+				if (sideDistX < sideDistY)
+				{
+					sideDistX += deltaDistX;
+					mapX += stepX;
+					side = 0;
+				}
+				else
+				{
+					sideDistY += deltaDistY;
+					mapY += stepY;
+					side = 1;
+				}
 
+				// Checking to see if a wall was hit in this iteration
+				if (map[mapX][mapY] > 0)
+					hit = true;
+			}
+
+			// Calculate distance using the camera direction instead of player direction (player direction would give the fisheye effect)
+			if (side == 0)
+				perpWallDist = sideDistX - deltaDistX;
+			else
+				perpWallDist = sideDistY - deltaDistY;
+
+			//Calculate the height of the wall that is to be drawn
+			int lineHeight = int(mapHeight / perpWallDist);
+
+			// Calculate the lowest and highest pixel to fill in current stripe
+			int drawStart =  (- lineHeight / 2) + (mapHeight / 2);
+
+			if (drawStart < 0)
+				drawStart = 0;
+
+			int drawEnd = (lineHeight / 2) + (mapHeight / 2);
+
+			if (drawEnd >= mapHeight)
+				drawEnd = mapHeight - 1;
+
+			// Choose wall color (darker colors if a y-side was hit for a nicer effect)
 		}
 	}
 
