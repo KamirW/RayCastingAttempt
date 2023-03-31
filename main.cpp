@@ -191,23 +191,23 @@ int main(int /*argc*/, char*/*argv*/[])
 				if (side == 1)
 					color = (sf::Color)(color.toInteger() / 2);
 
-				for (unsigned short y = 1; y <= 26; y++)
-				{
-					// Draw the pixels of the stripes as vertical lines
-					sf::Vertex line[] =
-					{
-						sf::Vertex(sf::Vector2f(x * y, drawStart * lineHeight)),
-						sf::Vertex(sf::Vector2f(x * y, drawEnd * lineHeight))
-					};
+				//for (unsigned short y = 1; y <= 26; y++)
+				//{
+				//	// Draw the pixels of the stripes as vertical lines
+				//	sf::Vertex line[] =
+				//	{
+				//		sf::Vertex(sf::Vector2f(x * y, drawStart * lineHeight)),
+				//		sf::Vertex(sf::Vector2f(x * y, drawEnd * lineHeight))
+				//	};
 
-					line->color = color;
-					//window->draw(line, 2, sf::Lines);
-				}
+				//	line->color = color;
+				//	//window->draw(line, 2, sf::Lines);
+				//}
 				
 
 				sf::RectangleShape line2;
-				line2.setPosition(x * 8, drawStart * lineHeight);
-				line2.setSize(sf::Vector2f(x * 8, drawEnd * lineHeight));
+				line2.setPosition(x * 26, drawStart * lineHeight);
+				line2.setSize(sf::Vector2f(x * 26, drawEnd * lineHeight));
 				line2.setScale(sf::Vector2f(1.0, 1.0));
 				line2.setFillColor(color);
 				/*line2.setOutlineColor(sf::Color::Black);
@@ -218,11 +218,10 @@ int main(int /*argc*/, char*/*argv*/[])
 
 			}
 
-			// Timing for input and FPS counter
+			// Timing for input
 			oldTime = time;
 			time = clock.getElapsedTime();
 			double frameTime = time.asSeconds() - oldTime.asSeconds();
-			//std::cout << "FPS: " << 1.0 / frameTime << std::endl;
 
 			window->display();
 			window->clear();
@@ -241,10 +240,8 @@ int main(int /*argc*/, char*/*argv*/[])
 				{
 					if (event.key.code == sf::Keyboard::Up)
 					{
-						//std::cout << "Heeeeeeelllllllllooooooo" << std::endl;
 						if (map[int(posX + dirX * moveSpeed)][int(posY)] == false) posX += dirX * moveSpeed;
 						if (map[int(posX)][int(posY + dirY * moveSpeed)] == false) posY += dirY * moveSpeed;
-
 					}
 
 					if (event.key.code == sf::Keyboard::Down)
