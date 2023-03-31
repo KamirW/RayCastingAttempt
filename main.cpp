@@ -4,16 +4,6 @@
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 
-void pollEvents(sf::RenderWindow* window, sf::Clock clock)
-{
-	
-}
-void update(sf::RenderWindow* window)
-{
-	
-	window->clear();
-	window->display();
-}
 
 #define mapWidth 24
 #define mapHeight 24
@@ -67,8 +57,7 @@ int main(int /*argc*/, char*/*argv*/[])
 	sf::Time oldTime; // Time of previous frame
 	sf::Clock clock;
 
-	double moveSpeed = 0;
-
+	double moveSpeed = 0.5;
 	// Creating the screen
 	sf::VideoMode videoMode(640, 680);
 	sf::RenderWindow* window = new sf::RenderWindow(videoMode, "Raycastor", sf::Style::Titlebar | sf::Style::Close);
@@ -199,19 +188,25 @@ int main(int /*argc*/, char*/*argv*/[])
 					break;
 				}
 
+				
 				// Draw the pixels of the stripes as vertical lines
 				sf::Vertex line[] =
 				{
-					sf::Vertex(sf::Vector2f(x, drawStart * deltaDistY)),
-					sf::Vertex(sf::Vector2f(x, -drawEnd * deltaDistY))
+					sf::Vertex(sf::Vector2f(x*26, drawStart * lineHeight)),
+					sf::Vertex(sf::Vector2f(x*26, drawEnd * lineHeight))
 				};
 
 				sf::RectangleShape line2;
-				//line2.setPosition(x, )
+				line2.setPosition(x * 26, drawStart * lineHeight);
+				line2.setSize(sf::Vector2f(x * 26, drawEnd * lineHeight));
+				line2.setScale(sf::Vector2f(1.0, 1.0));
+				line2.setFillColor(color);
 
 				line->color = color;
-				window->draw(line, 2, sf::Lines);// , 2, sf::Lines);
-				window->display();
+				//window->draw(line2);
+				window->draw(line, 2, sf::Lines);
+				
+				
 
 			}
 
@@ -224,8 +219,8 @@ int main(int /*argc*/, char*/*argv*/[])
 			window->clear();
 
 			// Speed modifiers
-			double movespeed = frameTime * 5.0;
-			double rotSpeed = frameTime * 5.0;
+			double movespeed = frameTime * 2.0;
+			double rotSpeed =  frameTime * 30.0;
 
 			// Input Keys
 			sf::Event event;
@@ -237,12 +232,42 @@ int main(int /*argc*/, char*/*argv*/[])
 				{
 					if (event.key.code == sf::Keyboard::Up)
 					{
-						std::cout << "Heeeeeeelllllllllooooooo" << std::endl;
+						//std::cout << "Heeeeeeelllllllllooooooo" << std::endl;
 						if (map[int(posX + dirX * moveSpeed)][int(posY)] == false) posX += dirX * moveSpeed;
 						if (map[int(posX)][int(posY + dirY * moveSpeed)] == false) posY += dirY * moveSpeed;
-						
+						window->clear();
 						window->display();
 
+					}
+
+					if (event.key.code == sf::Keyboard::Down)
+					{
+						if (map[int(posX - dirX * moveSpeed)][int(posY)] == false) posX -= dirX * moveSpeed;
+						if (map[int(posX)][int(posY - dirY * moveSpeed)] == false) posY -= dirY * moveSpeed;
+						window->clear();
+						window->display();
+					}
+
+					if (event.key.code == sf::Keyboard::Right)
+					{
+						//both camera direction and camera plane must be rotated
+						double oldDirX = dirX;
+						dirX = dirX * cos(-rotSpeed) - dirY * sin(-rotSpeed);
+						dirY = oldDirX * sin(-rotSpeed) + dirY * cos(-rotSpeed);
+						double oldPlaneX = planeX;
+						planeX = planeX * cos(-rotSpeed) - planeY * sin(-rotSpeed);
+						planeY = oldPlaneX * sin(-rotSpeed) + planeY * cos(-rotSpeed);
+					}
+
+					if (event.key.code == sf::Keyboard::Left)
+					{
+						//both camera direction and camera plane must be rotated
+						double oldDirX = dirX;
+						dirX = dirX * cos(rotSpeed) - dirY * sin(rotSpeed);
+						dirY = oldDirX * sin(rotSpeed) + dirY * cos(rotSpeed);
+						double oldPlaneX = planeX;
+						planeX = planeX * cos(rotSpeed) - planeY * sin(rotSpeed);
+						planeY = oldPlaneX * sin(rotSpeed) + planeY * cos(rotSpeed);
 					}
 				}
 			}
