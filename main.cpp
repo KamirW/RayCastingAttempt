@@ -39,7 +39,7 @@ int map[mapWidth][mapHeight] =
 };
 
 
-int main(int /*argc*/, char*/*argv*/[])
+int main()
 {
 	// Start position of the player
 	double posX = 22;
@@ -70,7 +70,7 @@ int main(int /*argc*/, char*/*argv*/[])
 		{
 
 			// Raycasting Loop
-			for (unsigned x = 0; x < screenWidth; x++)
+			for (unsigned short x = 0; x < screenWidth; x++)
 			{
 				// Calculate ray position and direction
 				double cameraX = ((2 * x) / double(screenWidth)) - 1; // x-coord in camera space
